@@ -27,6 +27,7 @@
 // ==============================
 
 
+
 let labelBoldEl = null;
 let labelDarkEl = null;
 
@@ -321,7 +322,10 @@ function startPulse(phaseName) {
 
 function buildDeterministicSequence() {
   AUTO_ANIM.seq = [];
-  for (let i = 0; i <= 6; i++) AUTO_ANIM.seq.push({ type: "preset", idx: i });
+for (let i = 0; i <= 6; i++) {
+  if (i === 2) continue; // Preset03 스킵
+  AUTO_ANIM.seq.push({ type: "preset", idx: i });
+}
   AUTO_ANIM.seq.push({ type: "preset", idx: 8 });
   AUTO_ANIM.seq.push({ type: "base" });
   AUTO_ANIM.seqIndex = 0;
@@ -368,7 +372,27 @@ function applyPresetIndex(idx) {
   beads = arr;
   usingPreset = true;
   currentPresetIndex = idx;
+  
   invalidateGroupBoundsCache();
+  function applyPresetIndex(idx) {
+  const arr = beadsPresets[idx];
+  if (!arr || !arr.length) return false;
+
+  beads = arr;
+  usingPreset = true;
+  currentPresetIndex = idx;
+
+invalidateGroupBoundsCache();
+
+// ❌ 여기서 fit 다시 계산하지 마
+// computeViewBounds();
+// computeFitToUI();
+
+return true;
+
+  return true;
+}
+  
   return true;
 }
 
@@ -411,6 +435,8 @@ function preload() {
       () => console.warn("Missing preset:", filename)
     );
     svgPresetDocs.push(doc);
+    
+    
   }
 }
 
@@ -593,6 +619,7 @@ function drawSafe() {
   }
   background(255);
   
+
 
   // UI 배경판 먼저
   drawUIBackplates();
@@ -815,15 +842,10 @@ function computeViewBounds() {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
   // preset transform (if any)
-  let xf = { dx: 0, dy: 0 };
-  if (usingPreset && currentPresetIndex >= 0 && presetXforms && presetXforms[currentPresetIndex]) {
-    xf = presetXforms[currentPresetIndex];
-  }
 
-  for (const b of beads) {
-    // include all beads; visibility toggles affect draw only
-    const x = b.x + (usingPreset ? (xf.dx || 0) : 0);
-    const y = b.y + (usingPreset ? (xf.dy || 0) : 0);
+for (const b of beads) {
+  const x = b.x;
+  const y = b.y;
     if (!isFinite(x) || !isFinite(y)) continue;
     minX = Math.min(minX, x);
     minY = Math.min(minY, y);
@@ -846,8 +868,8 @@ function computeViewBounds() {
 }
 
 function computeFitToUI() {
-  computeViewBounds();
-
+// 🔥 preset이든 아니든 항상 base 기준
+view = computeBoundsFixed(beadsBase, 0, 0);
   const uiW = 1920;
   const uiH = 1080;
 
@@ -861,6 +883,7 @@ function computeFitToUI() {
 
   const sFit = Math.min(availW / view.w, availH / view.h) * userScale;
 
+  
   const cx = (view.minX + view.maxX) * 0.5;
   const cy = (view.minY + view.maxY) * 0.5;
 
@@ -1722,7 +1745,7 @@ styleEl.parent(uiStageEl);
 
   // Fit / transform (kept as defaults so existing draw logic stays intact)
   ui.fitMargin = makeHiddenSlider(0, 200, 24, 1);
-  ui.userScale = makeHiddenSlider(0.2, 2.0, 1, 0.01);
+  ui.userScale = makeHiddenSlider(0.2, 2.0, 0.9, 0.01);
   ui.globalRotate = makeHiddenSlider(-20, 20, 0, 0.1);
 
   // Motion
@@ -1849,8 +1872,11 @@ ui.groupBottomPicker.value("#ffb3b3");
   applyDarkMode(false);
 
   const randomPreset = () => {
-    const idx = floor(random(0, 9)); // 0..8
-    applyPresetIndex(idx);
+   let idx = floor(random(0, 9));
+
+if (idx === 2) idx = 3; // Preset03 스킵
+
+applyPresetIndex(idx);
     usingPreset = true;
     currentPresetIndex = idx;
     // keep the same reveal behavior as your original "switch"

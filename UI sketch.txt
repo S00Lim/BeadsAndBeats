@@ -409,7 +409,7 @@
     <text class="st6" transform="translate(1295.7 1048.5)"><tspan x="0" y="0">88 CANAL ST</tspan></text>
   </g>
   <g id="Layer_5">
-    <text class="st6" transform="translate(1700.5 1048.5)"><tspan x="0" y="0">SHOP</tspan></text>
+    <text  class="st6" transform="translate(1700.5 1048.5)"><tspan x="0" y="0">SHOP</tspan></text>
   </g>
   <g id="Logo">
     <g>
