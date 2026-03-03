@@ -2129,7 +2129,7 @@
       <path class="st62" d="M1712,298.6c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,296.3c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="259.7" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1722.8 283.7)"><tspan x="0" y="0">Dark</tspan></text>
+      <text id="label-dark" class="st7" transform="translate(1722.8 283.7)"><tspan x="0" y="0">Dark</tspan></text>
       <path class="st62" d="M1712,247.7c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,245.4c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="208.8" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
@@ -2137,30 +2137,30 @@
       <path class="st62" d="M1712,196.8c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,194.5c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="157.9" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1723.2 180.7)"><tspan x="0" y="0">Bold</tspan></text>
+      <text id="label-bold" class="st7" transform="translate(1723.2 180.7)"><tspan x="0" y="0">Bold</tspan></text>
       <text class="st5" transform="translate(1721.9 137.3)"><tspan x="0" y="0">LOGO</tspan></text>
       <text class="st5" transform="translate(1707.2 356.9)"><tspan x="0" y="0">GRADIENT</tspan></text>
       <text class="st5" transform="translate(1711 576.1)"><tspan x="0" y="0">ANIMATE</tspan></text>
       <path class="st62" d="M1712,518.2c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,515.9c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="479.3" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1716.2 503.3)"><tspan x="0" y="0">Radial</tspan></text>
+      <text id="btn-radial" class="st7" transform="translate(1716.2 503.3)"><tspan x="0" y="0">Radial</tspan></text>
       <path class="st62" d="M1712,467.3c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,465c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="428.4" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1698.2 452)"><tspan x="0" y="0">Horizontal</tspan></text>
+      <text id="btn-horizontal" class="st7" transform="translate(1698.2 452)"><tspan x="0" y="0">Horizontal</tspan></text>
       <path class="st62" d="M1712,416.4c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,414.1c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="377.5" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1709.3 400.3)"><tspan x="0" y="0">Vertical</tspan></text>
+      <text id="btn-vertical" class="st7" transform="translate(1709.3 400.3)"><tspan x="0" y="0">Vertical</tspan></text>
       <path class="st62" d="M1712,737.4c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,735.1c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="698.5" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1704.9 722.5)"><tspan x="0" y="0">Gradient</tspan></text>
+      <text id="btn-gradientMotion" class="st7" transform="translate(1704.9 722.5)"><tspan x="0" y="0">Gradient</tspan></text>
       <path class="st62" d="M1712,686.5c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,684.2c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="647.6" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1720.8 671.2)"><tspan x="0" y="0">Jitter</tspan></text>
+      <text id="btn-jitter" class="st7" transform="translate(1720.8 671.2)"><tspan x="0" y="0">Jitter</tspan></text>
       <path class="st62" d="M1712,879c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,876.8c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="840.1" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
@@ -2172,7 +2172,7 @@
       <path class="st62" d="M1712,635.6c-12,0-21.7-9.8-21.7-21.7s9.8-21.7,21.7-21.7h61.2c12,0,21.7,9.8,21.7,21.7s-9.8,21.7-21.7,21.7h-61.2Z"/>
       <path class="st39" d="M1712,633.3c-10.7,0-19.4-8.7-19.4-19.4s8.7-19.4,19.4-19.4h61.2c10.7,0,19.4,8.7,19.4,19.4s-8.7,19.4-19.4,19.4h-61.2Z"/>
       <rect class="st73" x="1694.9" y="596.7" width="95.5" height="34.3" rx="17.2" ry="17.2"/>
-      <text class="st7" transform="translate(1723.3 619.5)"><tspan x="0" y="0">Beat</tspan></text>
+      <text id="btn-beat" class="st7" transform="translate(1723.3 619.5)"><tspan x="0" y="0">Beat</tspan></text>
     </g>
   </g>
   <g id="Mouse">

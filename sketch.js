@@ -26,9 +26,14 @@
 // ✅ Draw loop safety kept
 // ==============================
 
+
+let labelBoldEl = null;
+let labelDarkEl = null;
+
+
 // ✅ Cursor must be defined BEFORE any use
 const CURSOR_URL = "cursor-mouse.png";
-const CURSOR_CSS = `url(${CURSOR_URL}) 4 4, auto`;
+const CURSOR_CSS = `url(${CURSOR_URL}) 0 0, auto`;
 
 // (선택) 확인 로그는 setup() 안에서 찍어
 // console.log(CURSOR_URL, CURSOR_CSS);
@@ -242,6 +247,23 @@ function getAppearForBead(b) {
 
   return { skip: false, s, a };
 }
+
+function centerSvgTextOnX(textEl, centerX) {
+  if (!textEl) return;
+
+  // 현재 transform에서 y만 유지
+  const tf = textEl.getAttribute("transform") || "";
+  const m = tf.match(/translate\(\s*([-\d.]+)[,\s]+([-\d.]+)\s*\)/i);
+  const y = m ? parseFloat(m[2]) : 0;
+
+  textEl.setAttribute("text-anchor", "middle"); // 핵심
+  textEl.setAttribute("transform", `translate(${centerX} ${y})`);
+
+  // tspan도 x=0으로 고정해주면 더 안정적
+  const tspan = textEl.querySelector("tspan");
+  if (tspan) tspan.setAttribute("x", "0");
+}
+
 
 function easeOutBack(t, overshoot = 1.6) {
   const c1 = overshoot;
@@ -475,8 +497,16 @@ invalidateGroupBoundsCache();
 
   invalidateStripePattern();
   
-  const style = document.createElement("style");
+const style = document.createElement("style");
 style.textContent = `
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+  canvas { display: block; }
   html, body, canvas, #ui-stage, #ui-stage * {
     cursor: ${CURSOR_CSS} !important;
   }
@@ -825,7 +855,7 @@ function computeFitToUI() {
   const userScale = ui.userScale ? ui.userScale.value() : 1;
 
   // UI 스케치 하단 바 영역을 피하고 싶으면 여기 숫자 조절
-  const bottomReserved = 220; // 180~260 사이에서 취향껏
+  const bottomReserved = 190; // 180~260 사이에서 취향껏
   const availW = Math.max(10, uiW - margin * 2);
   const availH = Math.max(10, uiH - margin * 2 - bottomReserved);
 
@@ -837,7 +867,7 @@ function computeFitToUI() {
   fit.s = sFit;
   fit.tx = uiW * 0.5 - cx * sFit;
 
-  const liftUp = 0; // 로고를 더 위로 올리고 싶으면 +값(예: 80~180)
+  const liftUp = 40; // 로고를 더 위로 올리고 싶으면 +값(예: 80~180)
   fit.ty = uiH * 0.5 - cy * sFit - liftUp;
 
   if (!isFinite(fit.tx) || !isFinite(fit.ty) || !isFinite(fit.s)) {
@@ -1621,6 +1651,21 @@ uiStageEl.style("z-index", "9999");
   const svgHolder = createDiv();
   svgHolder.parent(wrap);
   svgHolder.html(uiSvgRaw);
+  // ✅ SVG root 잡기
+const svgRoot = uiStageEl.elt.querySelector("svg");
+
+// ✅ 버튼 라벨 노드 참조 (SVG에 id 붙였다는 가정)
+labelBoldEl = svgRoot?.querySelector("#label-bold");
+labelDarkEl = svgRoot?.querySelector("#label-dark");
+  
+  const btnVerticalEl = svgRoot?.querySelector("#btn-vertical");
+const btnHorizontalEl = svgRoot?.querySelector("#btn-horizontal");
+const btnRadialEl = svgRoot?.querySelector("#btn-radial");
+
+const btnBeatEl = svgRoot?.querySelector("#btn-beat");
+const btnJitterEl = svgRoot?.querySelector("#btn-jitter");
+const btnGradientMotionEl = svgRoot?.querySelector("#btn-gradientMotion");
+  
   svgHolder.style("position", "absolute");
   svgHolder.style("left", "0");
   svgHolder.style("top", "0");
@@ -1632,6 +1677,8 @@ uiStageEl.style("z-index", "9999");
 const styleEl = createElement("style", `
   #ui-stage svg { width: 1920px; height: 1080px; }
   #ui-stage #Logo { display: none !important; }
+
+  #ui-stage #Mouse { display: none !important; }
 
   /* ✅ 배경 rect 3개만 좌표로 정확히 숨김 (버튼 스타일은 살림) */
   #ui-stage rect[x="-0.4"][y="-0.2"][width="1920"][height="1080"],
@@ -1674,8 +1721,8 @@ styleEl.parent(uiStageEl);
   ui.showOuter = makeHiddenCheckbox(true);
 
   // Fit / transform (kept as defaults so existing draw logic stays intact)
-  ui.fitMargin = makeHiddenSlider(0, 200, 60, 1);
-  ui.userScale = makeHiddenSlider(0.2, 2.0, 0.65, 0.01);
+  ui.fitMargin = makeHiddenSlider(0, 200, 24, 1);
+  ui.userScale = makeHiddenSlider(0.2, 2.0, 1, 0.01);
   ui.globalRotate = makeHiddenSlider(-20, 20, 0, 0.1);
 
   // Motion
@@ -1764,6 +1811,14 @@ ui.groupBottomPicker = makeHiddenColor("#ffb3b3");
 
   const applyDarkMode = (on) => {
     uiDarkMode = !!on;
+    
+      // ✅ dark 클래스 토글
+  if (uiStageEl && uiStageEl.elt) {
+    uiStageEl.elt.classList.toggle("dark", uiDarkMode);
+    
+    applySectionLabelColor();
+  }
+
 
     if (uiDarkMode) {
       // BG black
@@ -1857,26 +1912,63 @@ ui.groupBottomPicker.value("#ffb3b3");
 
   // Right-panel button rectangles (from UI SVG)
   const BX = 1694.9, BW = 95.5, BH = 34.3;
+  const BTN_CENTER_X = BX + BW / 2; // 1742.65
   const r = (yy) => ({ x: BX, y: yy, w: BW, h: BH });
 
   // LOGO section
-  addHit("Bold",   ...Object.values(r(157.9)), () => { uiLayerMode = (uiLayerMode + 1) % 3; applyLayerMode(); });
+
   addHit("Random", ...Object.values(r(208.8)), () => { randomPreset(); });
-  addHit("Dark",   ...Object.values(r(259.7)), () => { applyDarkMode(!uiDarkMode); });
+
+  addHit("Bold", ...Object.values(r(157.9)), () => {
+  uiLayerMode = (uiLayerMode + 1) % 3;
+  applyLayerMode();
+  syncUIButtonLabels();
+});
+
+addHit("Dark", ...Object.values(r(259.7)), () => {
+  applyDarkMode(!uiDarkMode);
+  syncUIButtonLabels();
+});
 
   // GRADIENT section (direction)
-  addHit("Vertical",   ...Object.values(r(377.5)), () => { ui.groupGradDir.selected("Vertical"); invalidateGroupBoundsCache(); });
-  addHit("Horizontal", ...Object.values(r(428.4)), () => { ui.groupGradDir.selected("Horizontal"); invalidateGroupBoundsCache(); });
-  addHit("Radial",     ...Object.values(r(479.3)), () => { ui.groupGradDir.selected("Radial"); invalidateGroupBoundsCache(); });
+  addHit("Vertical",   ...Object.values(r(377.5)), () => { ui.groupGradDir.selected("Vertical"); invalidateGroupBoundsCache();                                                           syncSelectionColors();
+});
+  addHit("Horizontal", ...Object.values(r(428.4)), () => { ui.groupGradDir.selected("Horizontal"); invalidateGroupBoundsCache();
+                                                           syncSelectionColors();
+});
+  addHit("Radial",     ...Object.values(r(479.3)), () => { ui.groupGradDir.selected("Radial"); invalidateGroupBoundsCache();
+                                                           syncSelectionColors();
+});
 
   // ANIMATE section
-  addHit("Beat",     ...Object.values(r(596.7)), () => { ui.pulseOn.checked(!ui.pulseOn.checked()); });
-  addHit("Jitter",   ...Object.values(r(647.6)), () => { ui.jitterOn.checked(!ui.jitterOn.checked()); });
-  addHit("GradientMotion", ...Object.values(r(698.5)), () => { groupGradMotionOn = !groupGradMotionOn; });
+addHit("Beat", ...Object.values(r(596.7)), () => {
+  const next = !ui.pulseOn.checked();
+  ui.pulseOn.checked(next);
+    syncSelectionColors();
+
+
+  if (next) {
+    // ✅ Beat ON 될 때 적용할 디폴트
+    ui.pulseAmp.value(30);      // 크기
+    ui.pulseSpeed.value(0.11);
+      syncSelectionColors();
+
+    // 속도
+  }
+}
+      );
+  
+  addHit("Jitter",   ...Object.values(r(647.6)), () => { ui.jitterOn.checked(!ui.jitterOn.checked());   syncSelectionColors();
+});
+  addHit("GradientMotion", ...Object.values(r(698.5)), () => { groupGradMotionOn = !groupGradMotionOn;
+                                                               syncSelectionColors();
+});
 
   // SAVE / RESET
   addHit("Save",  ...Object.values(r(789.2)), () => { doSavePNG(); });
   addHit("Reset", ...Object.values(r(840.1)), () => { doReset(); });
+  
+  syncUIButtonLabels();
 
   // ---------- layout update ----------
 updateUITransform = () => {
@@ -1898,10 +1990,65 @@ computeFitToUI();
 
   // keep in sync on resize
   window.addEventListener("resize", updateUITransform);
+  applySectionLabelColor();
 
   // no legacy panel
   uiPanelEl = null;
   uiPanelVisible = false;
+  
+  function applySectionLabelColor() {
+  if (!uiStageEl || !uiStageEl.elt) return;
+  const svg = uiStageEl.elt.querySelector("svg");
+  if (!svg) return;
+
+  const targets = new Set(["LOGO", "GRADIENT", "ANIMATE"]);
+  const lightFill = "rgb(243,243,243)";
+
+  svg.querySelectorAll("text, tspan").forEach((node) => {
+   const raw = (node.textContent || "").trim();
+if (!raw) return;
+
+// ✅ 완전 대문자만 통과 (버튼 Gradient는 탈락)
+if (raw !== raw.toUpperCase()) return;
+
+const targets = new Set(["LOGO", "GRADIENT", "ANIMATE"]);
+if (!targets.has(raw)) return;
+
+    if (uiDarkMode) {
+      node.setAttribute("fill", lightFill);
+      node.style.fill = lightFill;
+    } else {
+      // 라이트 모드로 돌아갈 때 원래 색으로 복구하고 싶으면 여기서 지움
+      node.removeAttribute("fill");
+      node.style.fill = "";
+    }
+  });
+}
+  function syncSelectionColors() {
+
+  const RED = "rgb(255,0,0)";
+const NORMAL = "rgb(0,0,0)";
+
+  // ---- GRADIENT ----
+  const dir = ui.groupGradDir.value();
+
+  setColor(btnVerticalEl, dir === "Vertical");
+  setColor(btnHorizontalEl, dir === "Horizontal");
+  setColor(btnRadialEl, dir === "Radial");
+
+  // ---- ANIMATE ----
+  setColor(btnBeatEl, ui.pulseOn.checked());
+  setColor(btnJitterEl, ui.jitterOn.checked());
+  setColor(btnGradientMotionEl, groupGradMotionOn);
+
+  function setColor(el, active) {
+    if (!el) return;
+    const color = active ? RED : NORMAL;
+    el.setAttribute("fill", color);
+    el.style.fill = color;
+  }
+}
+  syncSelectionColors();
 }
 
 function togglePanel() {
@@ -1963,6 +2110,29 @@ function getUIScaleAndOffset() {
   const ox = (width - 1920 * s) * 0.5;
   const oy = (height - 1080 * s) * 0.5;
   return { s, ox, oy };
+}
+
+function syncUIButtonLabels() {
+  const modeText = ["Bold", "Regular", "Light"][uiLayerMode] || "Bold";
+
+  if (labelBoldEl) {
+    const tspan = labelBoldEl.querySelector("tspan");
+    if (tspan) tspan.textContent = modeText;
+    else labelBoldEl.textContent = modeText;
+  }
+
+const darkText = uiDarkMode ? "Dark" : "Light";
+  
+  if (labelDarkEl) {
+    const tspan = labelDarkEl.querySelector("tspan");
+    if (tspan) tspan.textContent = darkText;
+    else labelDarkEl.textContent = darkText;
+  }
+  
+  const BTN_CENTER_X = 1694.9 + 95.5 / 2;
+
+centerSvgTextOnX(labelBoldEl, BTN_CENTER_X);
+centerSvgTextOnX(labelDarkEl, BTN_CENTER_X);
 }
 
 function drawUIBackplates() {
